@@ -18,7 +18,6 @@ int main(){
          makeInterrupt21();
          interrupt(0x21,3,"messag",buffer,0);
          interrupt(0x21,0,buffer,0,0); 
-         interrupt(0x21,4,"tstprg",0x2000,0);
          interrupt(0x21,4,"shell",0x2000,0);
         while(1){
                 //todo
@@ -81,9 +80,9 @@ void SecReader(char* buffer, int sector){
 void executeProg(char* name, int seg){
         char temp2[13312];
         int i;
+        StrPrinter("start the program...\r\n");
         if(readFile(name,temp2)==1){
                         putInMemory(seg,i,temp2[i]); }
-                        StrPrinter("start the program...\r\n");
                         launchProgram(seg); }        
 
 
