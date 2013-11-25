@@ -16,7 +16,8 @@ int main(){
                         interrupt(0x21,0,buffer,0,0);
                         interrupt(0x21,5,0,0,0);//terminate() 
                 } else 
-                if(command[0]=='e'&&command[1]=='x'&&command[2]=='e'&&command[3]=='c'&&command[4]=='u'&&command[5]=='t'&&command[6]=='e'){
+                if(command[0]=='e'&&command[1]=='x'&&command[2]=='e'&&command[3]=='c'&&command[4]=='u'&&command[5]=='t'
+                &&command[6]=='e'){
                         for(i=8;command[i]!=0;i++){
                                         tst[i-8]=command[i];  }
                         interrupt(0x21,4,tst,0x2000,0);
