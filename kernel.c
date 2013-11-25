@@ -97,15 +97,15 @@ int readFile(char* fileName, char* buffer){
         for(i=0;i<16;i++){ 
                 for(j=0;j<6;j++){
                         if(temp1[j+32*i]!=fileName[j])break; }
-                if(j==6)break; }
- if(j==6){ 
+                        if(j==6)break; }
+                        if(j==6){ 
                 while(j<32){ //that means start load sector 
- if(temp1[j+32*i]!=0x00)SecReader(buffer+512*(j-6),temp1[j+32*i]);
+                        if(temp1[j+32*i]!=0x00)SecReader(buffer+512*(j-6),temp1[j+32*i]);
                         j++; }}
- if(i==16){
+                        if(i==16){
                 StrPrinter("File not found!\r\n");
-                return 0; }
-                else return 1; }
+                        return 0; }
+                        else return 1; }
 
 //_________________Handle Interrupt Function___________________
 void handleInterrupt21(int ax, int bx, int cx, int dx){
@@ -126,10 +126,10 @@ void handleInterrupt21(int ax, int bx, int cx, int dx){
                 bx is the array 
                 cx is to hold the file.*/
                 readFile(bx,cx); }
-                else if(ax==4){                
-                SecWriter(bx,cx); }
+                else if(ax==4){  
+                executeProg(bx,cx);  }
                 else if(ax==5){
-                executeProg(bx,cx); }
+                SecWriter(bx,cx);  }
                 else if(ax==6){
                 exe(bx,cx); }
                 else if(ax==7){
@@ -152,17 +152,20 @@ void terminate(){
 //__________Clear Function_____________
 
 void clear(char* buf, int i){
-int j;
-for(j=0;j<I;j++){
-buf[j]=0x0; } }
+          int j;
+              for(j=0;j<I;j++){
+              buf[j]=0x0; } }
 
 
+//__________Write Sector Function_____________
 
 void SecWriter(char* buf, int sec){
-int relatSec=CalculateMod(sec,18)+1;
-int p=CalculateDiv(sec,18);
-int head= CalculateMod(p,2);
-int track= CalculateDiv(sec,36);
-interrupt(0x13,3*256+1,buf,track*256+relatSec,head*256+0); }
+            int relatSec=CalculateMod(sec,18)+1;
+            int p=CalculateDiv(sec,18);
+            int head= CalculateMod(p,2);
+            int track= CalculateDiv(sec,36);
+            interrupt(0x13,3*256+1,buf,track*256+relatSec,head*256+0); }
+
+
 
 
