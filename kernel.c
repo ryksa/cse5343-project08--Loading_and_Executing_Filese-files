@@ -1,26 +1,30 @@
+
+/*
 /* Loading and Executing Files
 Reem alhumaidan
 */
 
 void StrPrinter(char* str);
+//void CharacterPrinter(char);
 void StrReader(char* str);
 void SecReader(char* buffer, int sector);
-void SecWriter(char* buffer, int sec);
 int CalculateMod(int i, int j);
 int CalculateDiv(int x, int y);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 int readFile(char* fileName, char* buffer);
 void executeProg(char* name, int seg);
 void terminate();
+int getFileSec(char* s,char* n,char* r);
+void setFileSec(char* x,char* y);
 void clear(char*,int);
-void exe(char*,int);
+
 
 //_____________________Main Function___________________________
 int main(){
         char buffer[13312]; //maximum size of the file
          makeInterrupt21();
          interrupt(0x21,3,"messag",buffer,0);
-         interrupt(0x21,0,buffer,0,0); 
+         interrupt(0x21,0,buffer,0,0);
          interrupt(0x21,4,"shell",0x2000,0);
         while(1){
                 //todo
@@ -56,18 +60,19 @@ void StrReader(char* str){
         temp=interrupt(0x16,0,0,0,0);
         while(temp!=0xd){
                 interrupt(0x10,0xE*256+temp,0,0,0);
-                if(temp!=0x8){ str[i]=temp;                
+                if(temp!=0x8){ str[i]=temp;
                         temp=interrupt(0x16,0,0,0,0);
                         i++;  }
                         else temp=interrupt(0x16,0,0,0,0); }
-        str[i]=0xa;         
-        str[i+1]=0xd; 
-        str[i+2]=0x0; 
+        str[i]=0xa;
+        str[i+1]=0xd;
+        str[i+2]=0x0;
         interrupt(0x10,0xE*256+0xa,0,0,0);
         interrupt(0x10,0xE*256+0xd,0,0,0); }
+        
 
 //_____________ ___Read Sector From Disk Function______________
-// This function will take a predefined character array of 512 
+// This function will take a predefined character array of 512
 // bytes+, plus a sector number
 void SecReader(char* buffer, int sector){
         int AnotherSector,head,track;
@@ -86,26 +91,27 @@ void executeProg(char* name, int seg){
         StrPrinter("start the program...\r\n");
         if(readFile(name,temp2)==1){
                         putInMemory(seg,i,temp2[i]); }
-                        launchProgram(seg); }        
+                        launchProgram(seg); }
 
 
 //_________________Read File Function__________________________
 int readFile(char* fileName, char* buffer){
         int i,j,k;
         char temp1[512]; /* Mapping the directory sector to temp1*/
-        SecReader(temp1,2);       
-        for(i=0;i<16;i++){ 
+        SecReader(temp1,2);
+        for(i=0;i<16;i++){
                 for(j=0;j<6;j++){
                         if(temp1[j+32*i]!=fileName[j])break; }
                         if(j==6)break; }
-                        if(j==6){ 
-                while(j<32){ //that means start load sector 
+                        if(j==6){
+                while(j<32){ //that means start load sector
                         if(temp1[j+32*i]!=0x00)SecReader(buffer+512*(j-6),temp1[j+32*i]);
                         j++; }}
                         if(i==16){
                 StrPrinter("File not found!\r\n");
                         return 0; }
                         else return 1; }
+                        
 
 //_________________Handle Interrupt Function___________________
 void handleInterrupt21(int ax, int bx, int cx, int dx){
@@ -123,48 +129,85 @@ void handleInterrupt21(int ax, int bx, int cx, int dx){
             // bx = char array holding file name
             // cx = address of a buffer to hold the file
                 /* For reading in files.
-                bx is the array 
+                bx is the array
                 cx is to hold the file.*/
                 readFile(bx,cx); }
-                else if(ax==4){  
-                executeProg(bx,cx);  }
-                else if(ax==5){
-                SecWriter(bx,cx);  }
                 else if(ax==6){
-                exe(bx,cx); }
+                executeProg(bx,cx);  }
                 else if(ax==7){
                 terminate(); }
                 else{
                 printString("error:invalid interrupt\r\n"); }}
+                
 
 //__________Terminate Program System Call Function_____________
 void terminate(){
-              char shell[6];
-              shell[0]=’s’;
-              shell[1]=’h’;
-              shell[2]=’e’;
-              shell[3]=’l’;
-              shell[4]=’l’;
-              shell[5]=0x0;
+
                 interrupt(0x21,4,"shell",0x2000,0); }
 
+           int SIZE_OF_NAME;
+           int SEC_SIZE;
+           
+           
+//________________Function to Get File Sector_________________           
+int getFileSec(char fName[SIZE_OF_NAME], char buf[SEC_SIZE], char fileSec[26])
+{
+        int e = 0;
+        int a = 0;
+        int q = 0;
 
-//__________Clear Function_____________
+  while (e < SEC_SIZE)
+ {
+        while (buf[e + a] == fName[a])
+        {
+                if (a == 5){
+                        a++;
+                        while (buf[e+a+q] != 0x00)
+                        { fileSec[q] = buf[e + a + q];
+                        q++;
+                         }
+
+        return q; }
+
+                q++; }
+
+                q++; }
+                return q;
+}
+
+//_______________Function to Set the File Sector________________
+int SIZE_OF_FILE;
+void setFileSec(char buf[SIZE_OF_FILE], char fileSec[26]) {
+        char BufSec[SEC_SIZE];
+        int a = 0;
+        int e = 0;
+        int i=0;
+                   while (fileSec[i] != 0x00 && i < 26) {
+                   e = 0;
+                   SecReader(buf, fileSec[a]);
+        while (e < SEC_SIZE) {
+                buf[a * SEC_SIZE + e] = buf[e];
+                e++; }
+                e++; }}
+
+
+
+//___________________Clear Function____________________________
 
 void clear(char* buf, int i){
           int j;
-              for(j=0;j<I;j++){
+              for(j=0;j<i;j++){
               buf[j]=0x0; } }
 
 
-//__________Write Sector Function_____________
 
-void SecWriter(char* buf, int sec){
-            int relatSec=CalculateMod(sec,18)+1;
-            int p=CalculateDiv(sec,18);
-            int head= CalculateMod(p,2);
-            int track= CalculateDiv(sec,36);
-            interrupt(0x13,3*256+1,buf,track*256+relatSec,head*256+0); }
+
+
+
+
+
+
+
 
 
 
