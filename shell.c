@@ -1,7 +1,7 @@
 // Reem Alhumaidan
 // shell.c
 
-void str(char* i);
+void clear(char* i);
 
 int main(){
         int i;
@@ -24,7 +24,7 @@ int main(){
                         else { interrupt(0x21,0,"Ops not a valid command! \r\n",0,0); }  }
         return 0; }
 
-        void str(char* i){
+        void clear(char* i){
                 int n;
                 while (i[n]!=0)
                 { i[n]='\0';  }
