@@ -1,7 +1,5 @@
-
-/*
 /* Loading and Executing Files
-Reem alhumaidan
+Reem Alhumaidan
 */
 
 void StrPrinter(char* str);
@@ -189,8 +187,6 @@ void setFileSec(char buf[SIZE_OF_FILE], char fileSec[26]) {
                 buf[a * SEC_SIZE + e] = buf[e];
                 e++; }
                 e++; }}
-
-
 
 //___________________Clear Function____________________________
 
