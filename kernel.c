@@ -143,11 +143,10 @@ void terminate(){
 
                 interrupt(0x21,4,"shell",0x2000,0); }
 
-           int SIZE_OF_NAME;
-           int SEC_SIZE;
            
-           
-//________________Function to Get File Sector_________________           
+//________________Function to Get File Sector_________________  
+int SIZE_OF_NAME;
+int SEC_SIZE;
 int getFileSec(char fName[SIZE_OF_NAME], char buf[SEC_SIZE], char fileSec[26])
 {
         int e = 0;
