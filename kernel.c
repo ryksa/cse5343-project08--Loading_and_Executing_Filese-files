@@ -2,15 +2,18 @@
 Reem alhumaidan
 */
 
-int CalculateDiv(int x, int y);
-int CalculateMod(int i, int j);
 void StrPrinter(char* str);
 void StrReader(char* str);
 void SecReader(char* buffer, int sector);
-void executeProg(char* name, int seg);
-int readFile(char* fileName, char* buffer);
+void SecWriter(char* buffer, int sec);
+int CalculateMod(int i, int j);
+int CalculateDiv(int x, int y);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
+int readFile(char* fileName, char* buffer);
+void executeProg(char* name, int seg);
 void terminate();
+void clear(char*,int);
+void exe(char*,int);
 
 //_____________________Main Function___________________________
 int main(){
@@ -124,12 +127,42 @@ void handleInterrupt21(int ax, int bx, int cx, int dx){
                 cx is to hold the file.*/
                 readFile(bx,cx); }
                 else if(ax==4){                
-                executeProgram(bx,cx); }
+                SecWriter(bx,cx); }
                 else if(ax==5){
+                executeProg(bx,cx); }
+                else if(ax==6){
+                exe(bx,cx); }
+                else if(ax==7){
                 terminate(); }
                 else{
-                printString("error:invalid entry\r\n"); }}
+                printString("error:invalid interrupt\r\n"); }}
 
 //__________Terminate Program System Call Function_____________
 void terminate(){
+              char shell[6];
+              shell[0]=’s’;
+              shell[1]=’h’;
+              shell[2]=’e’;
+              shell[3]=’l’;
+              shell[4]=’l’;
+              shell[5]=0x0;
                 interrupt(0x21,4,"shell",0x2000,0); }
+
+
+//__________Clear Function_____________
+
+void clear(char* buf, int i){
+int j;
+for(j=0;j<I;j++){
+buf[j]=0x0; } }
+
+
+
+void SecWriter(char* buf, int sec){
+int relatSec=CalculateMod(sec,18)+1;
+int p=CalculateDiv(sec,18);
+int head= CalculateMod(p,2);
+int track= CalculateDiv(sec,36);
+interrupt(0x13,3*256+1,buf,track*256+relatSec,head*256+0); }
+
+
