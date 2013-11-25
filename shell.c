@@ -23,9 +23,12 @@ int main(){
                         interrupt(0x21,5,0,0,0); }
                         else { interrupt(0x21,0,"Ops not a valid command! \r\n",0,0); }  }
         return 0; }
+        
+//___________________Clear Function____________________________        
 
-        void clear(char* i){
+void clear(char* i){
                 int n;
                 while (i[n]!=0)
-                { i[n]='\0';  }
-        }
+                { i[n]='\0';  }  }
+
+       
