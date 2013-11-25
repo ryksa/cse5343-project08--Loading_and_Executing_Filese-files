@@ -1,4 +1,4 @@
-// Reem Alhuamidan
+// Reem Alhumidan
 // shell.c
 
 #define SIZE_OF_NAME   7
